@@ -1,24 +1,25 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
-const cors = require("cors"); // Import cors
+const { exec } = require("child_process"); // Import exec for executing shell commands
+const cors = require("cors");
 
 const app = express();
 const PORT = 3001;
 
+// Path to the injected scripts file in the React source folder
+const scriptFilePath = path.join(__dirname, "../src/injectedScripts.js");
+
 // Use cors middleware to allow cross-origin requests
 app.use(cors());
 
-// Path to the injected scripts file in the React source folder
-const scriptFilePath = path.join(__dirname, "../src/injectedScripts.js");
+// Middleware to parse JSON request bodies
+app.use(express.json());
 
 // Ensure `injectedScripts.js` exists with a placeholder
 if (!fs.existsSync(scriptFilePath)) {
     fs.writeFileSync(scriptFilePath, `export const injectedScript = () => {};`, "utf8");
 }
-
-// Middleware to parse JSON request bodies
-app.use(express.json());
 
 // Define the /inject-script endpoint to save the injected script to `injectedScripts.js`
 app.post("/inject-script", (req, res) => {
@@ -35,7 +36,19 @@ app.post("/inject-script", (req, res) => {
         }
 
         console.log("Script saved successfully to injectedScripts.js");
-        res.status(200).send("Script saved successfully");
+
+        // Run the build command to rebuild the React app
+        exec("npm run build", { cwd: path.join(__dirname, "..") }, (buildErr, stdout, stderr) => {
+            if (buildErr) {
+                console.error("Error during build:", buildErr);
+                return res.status(500).send("Failed to rebuild the app");
+            }
+            console.log("Build completed successfully");
+            console.log(stdout);
+
+            // Optionally restart the server here (requires a proper setup to avoid stopping this script itself)
+            res.status(200).send("Script saved and app rebuilt successfully");
+        });
     });
 });
 
