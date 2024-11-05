@@ -52,8 +52,29 @@ app.post("/inject-script", (req, res) => {
             }
 
             console.log("Script appended successfully to injectedScripts.js");
+            res.status(200).send("Script appended successfully");
+        });
+    });
+});
 
-            // Run the build command to rebuild the React app
+// Define /deploy endpoint to commit changes, build, and restart the server
+app.post("/deploy", (req, res) => {
+    // Step 1: Add all changes to Git
+    exec("git add .", { cwd: path.join(__dirname, "..") }, (addErr) => {
+        if (addErr) {
+            console.error("Error adding changes to Git:", addErr);
+            return res.status(500).send("Failed to add changes to Git");
+        }
+
+        // Step 2: Commit the changes
+        const commitMessage = "Auto-commit: Injected new script and ready for deployment";
+        exec(`git commit -m "${commitMessage}"`, { cwd: path.join(__dirname, "..") }, (commitErr) => {
+            if (commitErr) {
+                console.error("Error committing changes:", commitErr);
+                return res.status(500).send("Failed to commit changes");
+            }
+
+            // Step 3: Build the React app
             exec("npm run build", { cwd: path.join(__dirname, "..") }, (buildErr, stdout, stderr) => {
                 if (buildErr) {
                     console.error("Error during build:", buildErr);
@@ -63,12 +84,23 @@ app.post("/inject-script", (req, res) => {
 
                 console.log("Build completed successfully");
                 console.log(stdout);
-                res.status(200).send("Script appended and app rebuilt successfully");
+
+                // Step 4: Restart the server (using pm2)
+                exec("pm2 restart server", (restartErr) => {
+                    if (restartErr) {
+                        console.error("Error restarting the server:", restartErr);
+                        return res.status(500).send("Failed to restart the server");
+                    }
+
+                    console.log("Server restarted successfully");
+                    res.status(200).send("App deployed successfully!");
+                });
             });
         });
     });
 });
 
+// Start the Express server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

@@ -9,6 +9,27 @@ function App() {
         }
     }, []); // Empty dependency array ensures this runs once when the component mounts
 
+    // Function to handle deployment request
+    const handleDeploy = async () => {
+        try {
+            const response = await fetch("http://localhost:3001/deploy", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response.ok) {
+                alert("Deployment started successfully!");
+            } else {
+                alert("Failed to start deployment");
+            }
+        } catch (error) {
+            console.error("Error starting deployment:", error);
+            alert("Error starting deployment");
+        }
+    };
+
     return (
         <div style={{ padding: "20px" }}>
             <h1>Inject JavaScript Code into Project Source</h1>
@@ -44,6 +65,12 @@ function App() {
                 }}
             >
                 Inject Script
+            </button>
+            <button
+                style={{ marginTop: "20px", marginLeft: "10px" }}
+                onClick={handleDeploy}
+            >
+                Deploy
             </button>
         </div>
     );
