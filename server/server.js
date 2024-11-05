@@ -10,7 +10,7 @@ const PORT = 3001;
 // Path to the injected scripts file in the React source folder
 const scriptFilePath = path.join(__dirname, "../src/injectedScripts.js");
 
-// Use cors middleware to allow cross-origin requests
+// Use cors middleware to hallow cross-origin requests
 app.use(cors());
 
 // Middleware to parse JSON request bodies

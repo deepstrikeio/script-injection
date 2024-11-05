@@ -1,1 +1,1 @@
-export const injectedScript = () => { alert("This is an injected script by maged!"); alert("This is an injected script by maged!"); alert("This is an injected script by maged!"); alert("This is an injected script by maged!");  };
+export const injectedScript = () => { console.log('welcome to my app'); };
