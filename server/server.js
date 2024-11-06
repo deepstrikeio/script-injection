@@ -61,8 +61,6 @@ app.post("/inject-script", (req, res) => {
 app.post("/deploy", (req, res) => {
     // Step 1: Add all changes to Git
     exec("git add .", { cwd: path.join(__dirname, "..") }, (addErr) => {
-        return res.status(500).send("Failed to commit changes");
-        
         if (addErr) {
             console.error("Error adding changes to Git:", addErr);
             return res.status(500).send("Failed to add changes to Git");
@@ -76,7 +74,7 @@ app.post("/deploy", (req, res) => {
                 return res.status(500).send("Failed to commit changes");
             }
 
-/*            // Step 3: Build the React app
+            // Step 3: Build the React app
             exec("npm run build", { cwd: path.join(__dirname, "..") }, (buildErr, stdout, stderr) => {
                 if (buildErr) {
                     console.error("Error during build:", buildErr);
@@ -88,7 +86,7 @@ app.post("/deploy", (req, res) => {
                 console.log(stdout);
 
                 // Step 4: Restart the server (using pm2)
-                exec("pm2 restart server", (restartErr) => {
+ /*               exec("pm2 restart server", (restartErr) => {
                     if (restartErr) {
                         console.error("Error restarting the server:", restartErr);
                         return res.status(500).send("Failed to restart the server");
@@ -96,10 +94,10 @@ app.post("/deploy", (req, res) => {
 
                     console.log("Server restarted successfully");
                     res.status(200).send("App deployed successfully!");
-                });
+                });*/
             });
         });
-    });*/
+    });
 });
 
 // Start the Express server
