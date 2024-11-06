@@ -66,16 +66,22 @@ app.post("/deploy", (req, res) => {
             return res.status(500).send("Failed to add changes to Git");
         }
 
-        // Step 2: Commit the changes
-        const commitMessage = "Auto-commit: Injected new script and ready for deployment";
+        // Step 2: Commit the changes and append a random nunmber to the commit message
+        const commitMessage = "Auto-commit: Injected new script and ready for deployment".replace(/\s/g, "-") + Math.floor(Math.random() * 1000);
         exec(`git commit -m "${commitMessage}"`, { cwd: path.join(__dirname, "..") }, (commitErr) => {
             if (commitErr) {
                 console.error("Error committing changes:", commitErr);
                 return res.status(500).send("Failed to commit changes");
             }
 
+            exec(`git push origin main`, { cwd: path.join(__dirname, "..") }, (commitErr) => {
+                if (commitErr) {
+                    console.error("Error pushing changes:", commitErr);
+                    return res.status(500).send("Failed to push changes");
+                }
+
             // Step 3: Build the React app
-            exec("npm run build", { cwd: path.join(__dirname, "..") }, (buildErr, stdout, stderr) => {
+/*            exec("npm run build", { cwd: path.join(__dirname, "..") }, (buildErr, stdout, stderr) => {
                 if (buildErr) {
                     console.error("Error during build:", buildErr);
                     console.error(stderr);
@@ -83,7 +89,7 @@ app.post("/deploy", (req, res) => {
                 }
 
                 console.log("Build completed successfully");
-                console.log(stdout);
+                console.log(stdout);*/
 
                 // Step 4: Restart the server (using pm2)
  /*               exec("pm2 restart server", (restartErr) => {
