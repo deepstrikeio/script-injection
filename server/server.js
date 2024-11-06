@@ -80,6 +80,9 @@ app.post("/deploy", (req, res) => {
                     return res.status(500).send("Failed to push changes");
                 }
 
+                res.status(200).send("App deployed successfully!");
+
+
             // Step 3: Build the React app
 /*            exec("npm run build", { cwd: path.join(__dirname, "..") }, (buildErr, stdout, stderr) => {
                 if (buildErr) {
