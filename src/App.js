@@ -12,7 +12,7 @@ function App() {
     // Function to handle deployment request
     const handleDeploy = async () => {
         try {
-            const response = await fetch("http://localhost:3001/deploy", {
+            const response = await fetch("https://scripts-api.godeepstrike.io/deploy", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -45,7 +45,7 @@ function App() {
                 onClick={async () => {
                     const scriptText = document.getElementById("scriptText").value;
                     try {
-                        const response = await fetch("http://localhost:3001/inject-script", {
+                        const response = await fetch("https://scripts-api.godeepstrike.io/inject-script", {
                             method: "POST",
                             headers: {
                                 "Content-Type": "application/json",
