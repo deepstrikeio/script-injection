@@ -48,7 +48,7 @@ app.post("/inject-script", (req, res) => {
         fs.writeFile(scriptFilePath, updatedScriptContent, "utf8", (writeErr) => {
             if (writeErr) {
                 console.error("Error saving script:", writeErr);
-                return res.status(500).send("Failed to save script");
+                return res.status(500).send("Failed to save script : "+writeErr);
             }
 
             console.log("Script appended successfully to injectedScripts.js");
