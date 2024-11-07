@@ -60,7 +60,7 @@ app.post("/inject-script", (req, res) => {
 // Define /deploy endpoint to commit changes, build, and restart the server
 app.post("/deploy", (req, res) => {
     // Step 1: Add all changes to Git
-    exec("git add .", { cwd: path.join(__dirname, "..") }, (addErr) => {
+    exec("sudo git add .", { cwd: path.join(__dirname, "..") }, (addErr) => {
         if (addErr) {
             console.error("Error adding changes to Git:", addErr);
             return res.status(500).send("Failed to add changes to Git");
@@ -68,13 +68,13 @@ app.post("/deploy", (req, res) => {
 
         // Step 2: Commit the changes and append a random nunmber to the commit message
         const commitMessage = "Auto-commit: Injected new script and ready for deployment".replace(/\s/g, "-") + Math.floor(Math.random() * 1000);
-        exec(`git commit -m "${commitMessage}"`, { cwd: path.join(__dirname, "..") }, (commitErr) => {
+        exec(`sudo git commit -m "${commitMessage}"`, { cwd: path.join(__dirname, "..") }, (commitErr) => {
             if (commitErr) {
                 console.error("Error committing changes:", commitErr);
                 return res.status(500).send("Failed to commit changes");
             }
 
-            exec(`git push origin main`, { cwd: path.join(__dirname, "..") }, (commitErr) => {
+            exec(`sudo git push origin main`, { cwd: path.join(__dirname, "..") }, (commitErr) => {
                 if (commitErr) {
                     console.error("Error pushing changes:", commitErr);
                     return res.status(500).send("Failed to push changes");
