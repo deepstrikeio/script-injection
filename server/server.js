@@ -74,7 +74,7 @@ app.post("/deploy", (req, res) => {
                 return res.status(500).send("Failed to commit changes");
             }
 
-            exec(`sudo git push origin main`, { cwd: path.join(__dirname, "..") }, (commitErr) => {
+            exec(`git push origin main`, { cwd: path.join(__dirname, "..") }, (commitErr) => {
                 if (commitErr) {
                     console.error("Error pushing changes:", commitErr);
                     return res.status(500).send("Failed to push changes");
