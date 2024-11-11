@@ -4,5 +4,6 @@ export const injectedScript = () => {
   alert("Hello! I am an alert box!!");
   alert("Hello! I am an alert box again!!");
   alert("Hello! I am an alert box third!!");
+  alert("Hello! I am an alert box third!!");
 
 };
