@@ -57,7 +57,6 @@ app.post("/inject-script", (req, res) => {
     });
 });
 
-// Define /deploy endpoint to commit changes, build, and restart the server
 app.post("/deploy", (req, res) => {
     // Step 1: Add all changes to Git
     exec("sudo git add .", { cwd: path.join(__dirname, "..") }, (addErr) => {
