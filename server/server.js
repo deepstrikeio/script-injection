@@ -49,13 +49,19 @@ app.post("/inject-script", (req, res) => {
                 }
             );
         } catch (e) {
-            // If not valid JavaScript, wrap it in comments
-            updatedScriptContent = data.replace(
-                /export const injectedScript = \(\) => \{([\s\S]*?)\};/,
-                (match, existingCode) => {
-                    return `export const injectedScript = () => {\n${existingCode.trim()}\n  /* ${newScript} */\n};`;
-                }
-            );
+            // If not valid JavaScript, append the plain text to the plainText variable
+            if (data.includes('export const plainText =')) {
+                // Append new text to existing plainText
+                updatedScriptContent = data.replace(
+                    /export const plainText = `([\s\S]*?)`;/,
+                    (match, existingText) => {
+                        return `export const plainText = \`${existingText.trim()}\n${newScript}\`;`;
+                    }
+                );
+            } else {
+                // If plainText variable doesn't exist, create it
+                updatedScriptContent = `${data.trim()}\nexport const plainText = \`${newScript}\`;`;
+            }
         }
 
         // Write the updated content back to `injectedScripts.js`
