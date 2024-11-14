@@ -36,19 +36,23 @@ app.post("/inject-script", (req, res) => {
             return res.status(500).send("Failed to read existing script file");
         }
 
-        // Extract the function content if exists, and append the new script
-        const updatedScriptContent = data.replace(
-            /export const injectedScript = \(\) => \{([\s\S]*)\};/,
-            (match, existingCode) => {
-                return `export const injectedScript = () => {\n${existingCode.trim()}\n  ${newScript}\n};`;
-            }
-        );
+        let scriptContent = "";
+
+        try {
+            // Attempt to validate if the input is JavaScript code
+            new Function(newScript);
+            // If valid JavaScript, inject it as it is
+            scriptContent = `export const injectedScript = () => {\n${data.trim()}\n  ${newScript}\n};`;
+        } catch (e) {
+            // If not valid JavaScript, wrap it in comments
+            scriptContent = `export const injectedScript = () => {\n${data.trim()}\n  /* ${newScript} */\n};`;
+        }
 
         // Write the updated content back to `injectedScripts.js`
-        fs.writeFile(scriptFilePath, updatedScriptContent, "utf8", (writeErr) => {
+        fs.writeFile(scriptFilePath, scriptContent, "utf8", (writeErr) => {
             if (writeErr) {
                 console.error("Error saving script:", writeErr);
-                return res.status(500).send("Failed to save script : "+writeErr);
+                return res.status(500).send("Failed to save script: " + writeErr);
             }
 
             console.log("Script appended successfully to injectedScripts.js");
